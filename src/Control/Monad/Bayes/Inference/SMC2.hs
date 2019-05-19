@@ -34,6 +34,7 @@ instance MonadTrans SMC2 where
 
 instance MonadSample m => MonadSample (SMC2 m) where
   random = lift random
+  shuffle = lift . shuffle
 
 instance Monad m => MonadCond (SMC2 m) where
   score = SMC2 . score

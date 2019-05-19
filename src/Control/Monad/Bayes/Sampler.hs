@@ -104,3 +104,5 @@ instance MonadSample SamplerST where
   bernoulli p = fromMWC $ MWC.bernoulli p
   categorical ps = fromMWC $ MWC.categorical ps
   geometric p = fromMWC $ MWC.geometric0 p
+
+  shuffle xs = fromMWC $ MWC.uniformShuffle xs

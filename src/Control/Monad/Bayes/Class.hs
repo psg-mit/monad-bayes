@@ -23,6 +23,7 @@ module Control.Monad.Bayes.Class (
   geometric,
   poisson,
   dirichlet,
+  shuffle,
   MonadCond,
   score,
   factor,
@@ -85,6 +86,9 @@ class Monad m => MonadSample m where
   poisson :: Double -> m Int
   poisson lambda = discrete (Poisson.poisson lambda)
 
+  --  uniform permutation of a vector
+  shuffle :: Vector v a => v a -> m (v a)
+
   dirichlet :: Vector v Double => v Double -> m (v Double)
   dirichlet as = do
     xs <- VG.mapM (`gamma` 1) as
@@ -134,6 +138,7 @@ normalPdf mu sigma x = Exp $ logDensity (normalDistr mu sigma) x
 instance MonadSample m => MonadSample (IdentityT m) where
   random = lift random
   bernoulli = lift . bernoulli
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (IdentityT m) where
   score = lift . score
@@ -143,6 +148,7 @@ instance MonadInfer m => MonadInfer (IdentityT m)
 
 instance MonadSample m => MonadSample (MaybeT m) where
   random = lift random
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (MaybeT m) where
   score = lift . score
@@ -153,6 +159,7 @@ instance MonadInfer m => MonadInfer (MaybeT m)
 instance MonadSample m => MonadSample (ReaderT r m) where
   random = lift random
   bernoulli = lift . bernoulli
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (ReaderT r m) where
   score = lift . score
@@ -164,6 +171,7 @@ instance (Monoid w, MonadSample m) => MonadSample (WriterT w m) where
   random = lift random
   bernoulli = lift . bernoulli
   categorical = lift . categorical
+  shuffle = lift . shuffle
 
 instance (Monoid w, MonadCond m) => MonadCond (WriterT w m) where
   score = lift . score
@@ -175,6 +183,7 @@ instance MonadSample m => MonadSample (StateT s m) where
   random = lift random
   bernoulli = lift . bernoulli
   categorical = lift . categorical
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (StateT s m) where
   score = lift . score
@@ -184,6 +193,7 @@ instance MonadInfer m => MonadInfer (StateT s m)
 
 instance (MonadSample m, Monoid w) => MonadSample (RWST r w s m) where
   random = lift random
+  shuffle = lift . shuffle
 
 instance (MonadCond m, Monoid w) => MonadCond (RWST r w s m) where
   score = lift . score
@@ -195,6 +205,7 @@ instance MonadSample m => MonadSample (ListT m) where
   random = lift random
   bernoulli = lift . bernoulli
   categorical = lift . categorical
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (ListT m) where
   score = lift . score
@@ -204,6 +215,7 @@ instance MonadInfer m => MonadInfer (ListT m)
 
 instance MonadSample m => MonadSample (ContT r m) where
   random = lift random
+  shuffle = lift . shuffle
 
 instance MonadCond m => MonadCond (ContT r m) where
   score = lift . score
