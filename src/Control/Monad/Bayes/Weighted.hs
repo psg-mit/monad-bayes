@@ -22,6 +22,7 @@ module Control.Monad.Bayes.Weighted (
 
 import Control.Monad.Trans
 import Control.Monad.Trans.State
+import Control.Monad.Fix
 
 import Numeric.Log
 import Control.Monad.Bayes.Class
@@ -29,7 +30,7 @@ import Control.Monad.Bayes.Class
 -- | Executes the program using the prior distribution, while accumulating likelihood.
 newtype Weighted m a = Weighted (StateT (Log Double) m a)
     --StateT is more efficient than WriterT
-    deriving(Functor, Applicative, Monad, MonadIO, MonadTrans, MonadSample)
+    deriving(Functor, Applicative, Monad, MonadIO, MonadTrans, MonadSample, MonadFix)
 
 instance Monad m => MonadCond (Weighted m) where
   score w = Weighted (modify (* w))

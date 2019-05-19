@@ -27,12 +27,13 @@ import qualified System.Random.MWC.Distributions as MWC
 import Control.Monad.State (State, state)
 import Control.Monad.Trans (lift, MonadIO)
 import Control.Monad.Trans.Reader (ReaderT, runReaderT, ask, mapReaderT)
+import Control.Monad.Fix
 
 import Control.Monad.Bayes.Class
 
 -- | An `IO` based random sampler using the MWC-Random package.
 newtype SamplerIO a = SamplerIO (ReaderT GenIO IO a)
-  deriving(Functor, Applicative, Monad, MonadIO)
+  deriving(Functor, Applicative, Monad, MonadIO, MonadFix)
 
 -- | Initialize PRNG using OS-supplied randomness.
 -- For efficiency this operation should be applied at the very end, ideally once per program.
