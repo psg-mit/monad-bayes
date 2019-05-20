@@ -55,6 +55,17 @@ fromSamplerST (SamplerST m) = SamplerIO $ mapReaderT stToIO m
 instance MonadSample SamplerIO where
   random = fromSamplerST random
 
+  uniform a b = fromSamplerST $ Control.Monad.Bayes.Class.uniform a b
+  normal m s = fromSamplerST $ normal m s
+  gamma shape scale = fromSamplerST $ gamma shape scale
+  beta a b = fromSamplerST $ beta a b
+
+  bernoulli p = fromSamplerST $ bernoulli p
+  categorical ps = fromSamplerST $ categorical ps
+  geometric p = fromSamplerST $ geometric p
+
+  shuffle = fromSamplerST . shuffle
+
 
 
 
